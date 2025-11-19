@@ -1,8 +1,5 @@
 import os
 import pathlib
-import time
-import json
-import numpy as np
 from typing import Dict
 
 import fitz
@@ -14,17 +11,24 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import FAISS
 
 from RAG_Configuration import (
-    PARAMS, RAG_TEMPLATE, PREGUNTAS, CLAVES, format_docs, cronometro
+    PARAMS, RAG_TEMPLATE, PREGUNTAS, format_docs, cronometro
 )
 
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+
 import tiktoken
 
 
+# Tokenizer del LLM
 tok_llm = tiktoken.encoding_for_model(PARAMS["LLM_MODEL"])
-def tokens_llm(text): return len(tok_llm.encode(text))
+def tokens_llm(text): 
+    return len(tok_llm.encode(text))
 
+
+# ============================================================
+#         PDF → Markdown por página usando pymupdf4llm
+# ============================================================
 
 def obtener_markdown_por_pagina(pdf_file: str):
     doc = fitz.open(pdf_file)
@@ -81,12 +85,12 @@ def run_rag(pdf_path: str) -> Dict:
     prompt = PromptTemplate.from_template(RAG_TEMPLATE)
 
     # ============================================================
-    # 1. PDF → markdown
+    # 1. PDF → markdown por página
     # ============================================================
     docs_por_pagina = obtener_markdown_por_pagina(pdf_path)
 
     # ============================================================
-    # 2. Split
+    # 2. Split a chunks
     # ============================================================
     chunks = []
     for d in docs_por_pagina:
@@ -104,12 +108,12 @@ def run_rag(pdf_path: str) -> Dict:
         vs = FAISS.from_documents(chunks, emb)
 
     # ============================================================
-    # 4. Preguntas
+    # 4. Preguntas del RAG
     # ============================================================
     respuestas = {}
-    recall_scores = {}
 
     for q in PREGUNTAS:
+
         results_with_scores = vs.similarity_search_with_score(q, k=TOP_K)
         results_with_scores.sort(key=lambda x: x[1], reverse=True)
 
@@ -117,24 +121,20 @@ def run_rag(pdf_path: str) -> Dict:
 
         if not docs:
             respuestas[q] = "No está disponible en el PDF."
-            recall_scores[q] = 0.0
             continue
 
         contexto = format_docs(docs)
 
+        # Llamada al LLM
         llm_resp = llm.invoke(prompt.format(context=contexto, question=q))
         ans = parser.invoke(llm_resp).strip()
 
         respuestas[q] = ans
-        encontrado = any(ans.lower() in d.page_content.lower() for d in docs)
-        recall_scores[q] = 1.0 if encontrado else 0.0
 
     # ============================================================
-    # 5. Retorno
+    # 5. Retorno SIN métricas
     # ============================================================
     return {
         "archivo": os.path.basename(pdf_path),
-        "respuestas": respuestas,
-        "recall_por_pregunta": recall_scores,
-        "recall_promedio": round(sum(recall_scores.values()) / len(recall_scores), 3)
+        "respuestas": respuestas
     }
