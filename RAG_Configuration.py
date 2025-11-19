@@ -49,14 +49,9 @@ Respuesta breve y precisa:
 #     PREGUNTAS DEFAULT
 # ================================
 
-PREGUNTAS = [
-    "¿Quién es el emisor de esta cartola?",
-    "¿Cuál es la fecha de cierre del documento?",
-    "¿Cuál es el nombre de la empresa cliente?",
-    "Dame todos los números de cuenta asociados a la empresa cliente."
-]
-
+PREGUNTAS = []
 CLAVES = {}
+
 
 # ================================
 #         UTILIDADES
