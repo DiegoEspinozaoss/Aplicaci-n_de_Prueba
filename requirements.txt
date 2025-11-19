@@ -9,7 +9,8 @@ langchain-community==0.2.7
 
 langchain-openai==0.2.3
 
-faiss-cpu==1.7.4
+faiss-cpu==1.13.0
+
 pymupdf==1.24.7
 pymupdf4llm==0.0.17
 
