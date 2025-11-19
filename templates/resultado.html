@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados del RAG</title>
+</head>
+<body>
+    <h1>Resultados del Análisis RAG</h1>
+
+    {% for clave, valor in resultados.items() %}
+        <p><b>{{ clave }}:</b> {{ valor }}</p>
+    {% endfor %}
+
+    <br><br>
+    <a href="/">Volver</a>
+</body>
+</html>
