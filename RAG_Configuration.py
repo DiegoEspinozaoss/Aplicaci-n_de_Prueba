@@ -49,8 +49,9 @@ Respuesta breve y precisa:
 #     PREGUNTAS DEFAULT
 # ================================
 
-PREGUNTAS = []
-CLAVES = {}
+PREGUNTAS = ["¿Quién es el emisor?"]
+CLAVES = {"emisor": "emisor"}
+
 
 
 # ================================
