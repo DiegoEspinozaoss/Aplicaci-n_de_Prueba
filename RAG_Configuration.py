@@ -56,12 +56,7 @@ PREGUNTAS = [
     "Dame todos los números de cuenta asociados a la empresa cliente."
 ]
 
-CLAVES = {
-    PREGUNTAS[0]: "emisor",
-    PREGUNTAS[1]: "fecha_cierre",
-    PREGUNTAS[2]: "cliente",
-    PREGUNTAS[3]: "cuentas",
-}
+CLAVES = {}
 
 # ================================
 #         UTILIDADES
