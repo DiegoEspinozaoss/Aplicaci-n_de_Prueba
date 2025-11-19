@@ -1,25 +1,18 @@
-Flask==3.0.2
-gunicorn==23.0.0
+flask
+gunicorn
 
-python-dotenv==1.0.1
-tqdm==4.66.4
-numpy==1.26.4
+openai
+tiktoken
 
-pymupdf==1.24.9
-pymupdf4llm==0.0.15
+langchain
+langchain-core
+langchain-community
+langchain-openai
 
-tiktoken==0.7.0
+faiss-cpu
+pymupdf4llm
+pymupdf
+numpy
+pandas
 
-# LangChain ecosystem
-langchain==0.2.11
-langchain-core==0.2.26
-langchain-community==0.2.6
-langchain-openai==0.1.6
-langchain-text-splitters==0.2.2
-
-faiss-cpu==1.7.4
-
-# Para HuggingFace embeddings si lo usas
-transformers==4.41.2
-sentence-transformers==2.7.0
-torch==2.2.2
+python-dotenv
