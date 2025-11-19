@@ -4,10 +4,10 @@ gunicorn==21.2.0
 openai==1.42.0
 tiktoken==0.7.0
 
-langchain-core==0.2.36
-langchain-community==0.2.7
-
+langchain-core==0.3.17
 langchain-openai==0.2.3
+langchain-community==0.3.9
+
 
 faiss-cpu==1.13.0
 
