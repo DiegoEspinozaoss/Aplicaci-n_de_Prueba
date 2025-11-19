@@ -1,46 +1,42 @@
-from flask import Flask, request, render_template_string
 import os
+from flask import Flask, request, render_template
+from rag_runner import run_rag   # 🔥 Tu pipeline RAG real
 
-app = Flask(__name__)
+# Crear carpeta para subir PDFs
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-HTML_FORM = """
-<h1>Subir PDF en Azure</h1>
+app = Flask(__name__)
 
-<form method="POST" enctype="multipart/form-data">
-    <label>Sube un PDF:</label><br><br>
-    <input type="file" name="pdf_file" accept="application/pdf" required>
-    <br><br>
-    <button type="submit">Subir</button>
-</form>
 
-{% if mensaje %}
-    <h3>{{ mensaje }}</h3>
-{% endif %}
-"""
-
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def index():
-    mensaje = None
+    # Vista con formulario para subir PDF
+    return render_template("upload.html")
 
-    if request.method == "POST":
-        if "pdf_file" not in request.files:
-            mensaje = "No se subió ningún archivo."
-        else:
-            file = request.files["pdf_file"]
 
-            if file.filename == "":
-                mensaje = "No seleccionaste un archivo."
-            elif not file.filename.lower().endswith(".pdf"):
-                mensaje = "Solo se permiten archivos PDF."
-            else:
-                # Guardar el PDF en la carpeta uploads/
-                save_path = os.path.join(UPLOAD_FOLDER, file.filename)
-                file.save(save_path)
-                mensaje = f"PDF recibido correctamente: {file.filename}"
+@app.route("/upload", methods=["POST"])
+def upload():
+    if "pdf_file" not in request.files:
+        return "No se subió ningún archivo."
 
-    return render_template_string(HTML_FORM, mensaje=mensaje)
+    file = request.files["pdf_file"]
+
+    if file.filename == "":
+        return "No seleccionaste un archivo."
+
+    if not file.filename.lower().endswith(".pdf"):
+        return "Solo se permiten archivos PDF."
+
+    # Guardar PDF
+    pdf_path = os.path.join(UPLOAD_FOLDER, file.filename)
+    file.save(pdf_path)
+
+    # Ejecutar tu RAG 🚀
+    resultados = run_rag(pdf_path)
+
+    # Mostrar los resultados en HTML
+    return render_template("resultado.html", resultados=resultados)
 
 
 if __name__ == "__main__":
